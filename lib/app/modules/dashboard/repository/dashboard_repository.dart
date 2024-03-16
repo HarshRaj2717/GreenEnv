@@ -1,3 +1,5 @@
+import 'package:tree_coin/app/modules/dashboard/model/user_profile_response/user_profile_response.dart';
+
 abstract class DashboardRepository {
-  // TODO: add your impl here
+  Future<UserProfileResponse> userProfile();
 }

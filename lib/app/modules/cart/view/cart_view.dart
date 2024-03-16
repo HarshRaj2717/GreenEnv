@@ -20,6 +20,7 @@ class CartView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = ref.watch(appThemeProvider);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: BaseColor.pageBackground,

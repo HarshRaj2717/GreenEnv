@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tree_coin/app/core/local_storage/app_storage.dart';
 import 'package:tree_coin/app/helper/assets.dart';
 import 'package:tree_coin/app/modules/auth/login/view/login_view.dart';
+import 'package:tree_coin/app/modules/dashboard/view/dashboard_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -28,7 +31,13 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   }
 
   void checkLogin() async {
-    context.go(LoginView.routeName);
+    final token = await AppStorage().getToken();
+    if (token?.isNotEmpty ?? false) {
+      log(token ?? "");
+      context.go(DashboardView.routeName);
+    } else {
+      context.go(LoginView.routeName);
+    }
   }
 
   @override

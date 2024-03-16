@@ -6,6 +6,7 @@ import 'package:tree_coin/app/modules/auth/registration/view/registration_view.d
 import 'package:tree_coin/app/modules/cart/view/cart_view.dart';
 import 'package:tree_coin/app/modules/dashboard/view/dashboard_view.dart';
 import 'package:tree_coin/app/modules/dashboard/widget/dashboard_widget.dart';
+import 'package:tree_coin/app/modules/settings/view/settings_view.dart';
 import 'package:tree_coin/app/modules/splash/splash_screen.dart';
 
 ///
@@ -24,6 +25,11 @@ final routerProvider = Provider<GoRouter>(
         GoRoute(
           path: SplashView.routeName,
           builder: (context, state) => const SplashView(),
+        ),
+
+        GoRoute(
+          path: SettingsView.routeName,
+          builder: (context, state) => const SettingsView(),
         ),
 
         GoRoute(
