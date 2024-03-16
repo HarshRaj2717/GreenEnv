@@ -24,7 +24,7 @@ function NavBar() {
 
 function Hero() {
   return (
-    <main className="flex flex-row h-screen">
+    <main className="flex flex-row min-h-screen">
       <div className="flex-grow-0 w-1/4 bg-gray-200">
         <P1 />
       </div>
