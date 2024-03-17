@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function Dashboard() {
   const handleKeyPress = (event) => {
@@ -8,6 +8,15 @@ export default function Dashboard() {
       event.preventDefault();
     }
   };
+
+  useEffect(() => {
+    // Check if api_token is present in localStorage
+    const apiToken = localStorage.getItem("api_token");
+    if (!apiToken) {
+      // If api_token is not present, redirect to home page
+      window.location.replace("/");
+    }
+  }, []);
 
   return (
     <div className="hero min-h-screen bg-base-200">
