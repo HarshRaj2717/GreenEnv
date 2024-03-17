@@ -6,6 +6,7 @@ import 'package:tree_coin/app/modules/dashboard/repository/dashboard_repository_
 part 'dashboard_providers.g.dart';
 
 final showBalanceProvider = StateProvider<bool>((ref) => false);
+final imageIndex = StateProvider<int>((ref) => 0);
 final loadCartProvider = StateProvider.autoDispose<bool>((ref) => false);
 @riverpod
 Future<UserProfileResponse> userProfile(

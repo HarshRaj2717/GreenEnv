@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -5,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tree_coin/app/core/theme/app_theme.dart';
-import 'package:tree_coin/app/helper/assets.dart';
 import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/helper/text_style.dart';
 import 'package:tree_coin/app/modules/cart/repository/cart_repository_impl.dart';
@@ -18,8 +19,16 @@ class TreeDecriptionView extends ConsumerWidget {
   final TreeData treeData;
   static const routeName = '/treeDescription';
 
+  List<String> imageList = [
+    'https://m.media-amazon.com/images/I/71xmeIRSsPL.jpg',
+    'https://m.media-amazon.com/images/I/71Q2I8bLviL.jpg',
+    'https://m.media-amazon.com/images/I/51nlTnNsn5L._AC_UF1000,1000_QL80_.jpg'
+        ''
+  ];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final pos = ref.watch(imageIndex);
     final appTheme = ref.read(appThemeProvider);
     final load = ref.watch(loadCartProvider);
     return SafeArea(
@@ -61,6 +70,10 @@ class TreeDecriptionView extends ConsumerWidget {
                         BoxShadow(color: Colors.blueGrey, blurRadius: 6)
                       ],
                       borderRadius: BorderRadius.all(Radius.circular(12))),
+                  child: Image.network(
+                    imageList[pos],
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               SizedBox(
@@ -70,34 +83,35 @@ class TreeDecriptionView extends ConsumerWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < imageList.length; i++)
                       Row(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.025,
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.05,
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.01),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(12),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Image.asset(
-                                    BaseAssets.logo,
-                                  ),
+                          InkWell(
+                            onTap: () {
+                              ref.read(imageIndex.notifier).state = i;
+                            },
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.08,
+                              width: MediaQuery.of(context).size.height * 0.08,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  vertical: MediaQuery.of(context).size.height *
+                                      0.01),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                      imageList[i],
+                                    ),
+                                    fit: BoxFit.fill),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(12),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                           SizedBox(
