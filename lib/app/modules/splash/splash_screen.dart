@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tree_coin/app/core/local_storage/app_storage.dart';
 import 'package:tree_coin/app/helper/assets.dart';
+import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/modules/auth/login/view/login_view.dart';
 import 'package:tree_coin/app/modules/dashboard/view/dashboard_view.dart';
 
@@ -43,7 +44,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: BaseColor.primary,
       body: Center(
         child: AnimatedBuilder(
           animation: controller,
