@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tree_coin/app/core/network/api_client.dart';
 import 'package:tree_coin/app/core/theme/app_theme.dart';
 import 'package:tree_coin/app/helper/assets.dart';
 import 'package:tree_coin/app/helper/base_color.dart';
@@ -207,6 +209,14 @@ class LoginView extends ConsumerWidget {
                               context.go(DashboardView.routeName);
                             } else {
                               log(value.toString());
+                              Fluttertoast.showToast(
+                                  msg: 'Failed to login !!',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 5,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
                               ref.read(loadingProvider.notifier).state = false;
                             }
                           });

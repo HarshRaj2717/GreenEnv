@@ -10,6 +10,7 @@ import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/helper/primary_button.dart';
 import 'package:tree_coin/app/helper/text_style.dart';
 import 'package:tree_coin/app/modules/auth/login/view/login_view.dart';
+import 'package:tree_coin/app/modules/cart/view/cart_view.dart';
 import 'package:tree_coin/app/modules/dashboard/providers/dashboard_providers.dart';
 
 class SettingsView extends ConsumerWidget {
@@ -131,28 +132,34 @@ class SettingsView extends ConsumerWidget {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.05,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(6)),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.blueGrey, blurRadius: 6)
-                              ]),
-                          child: Row(
-                            children: [
-                              Text(
-                                "My Cart",
-                                style: BaseTextStyle.listItemTitle,
-                              ),
-                              Spacer(),
-                              Icon(Icons.arrow_forward_ios)
-                            ],
+                        InkWell(
+                          onTap: () {
+                            context.push(CartView.routeName);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(6)),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.blueGrey, blurRadius: 6)
+                                ]),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "My Cart",
+                                  style: BaseTextStyle.listItemTitle,
+                                ),
+                                Spacer(),
+                                Icon(Icons.arrow_forward_ios)
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(

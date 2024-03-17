@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.2
   pinput: ^3.0.1
   intl_phone_field:
+  fluttertoast: ^8.2.4
   # Screenshot 
   screenshot: ^2.1.0
   country_picker: ^2.0.23

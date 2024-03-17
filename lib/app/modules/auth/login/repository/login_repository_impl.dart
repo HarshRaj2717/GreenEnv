@@ -16,8 +16,9 @@ class LoginRepositoryImpl extends LoginRepository {
       final response = await apiClient.post(Endpoints.login.url, data: data);
       if (response.statusCode == 200) {
         await AppStorage().putToken(response.data['api_token']);
+
         return true;
-      }
+      } else {}
       return false;
     } catch (e) {
       Future.error(e.toString());

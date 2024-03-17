@@ -20,6 +20,8 @@ class ApiClient {
   }
 }
 
+String errorMessage = '';
+
 class ApiInterceptors extends Interceptor {
   final Dio dio;
   const ApiInterceptors(this.dio);
