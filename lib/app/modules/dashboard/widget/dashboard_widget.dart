@@ -1,19 +1,27 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tree_coin/app/core/theme/app_theme.dart';
 import 'package:tree_coin/app/helper/assets.dart';
 import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/helper/text_style.dart';
+import 'package:tree_coin/app/modules/cart/repository/cart_repository_impl.dart';
+import 'package:tree_coin/app/modules/cart/view/cart_view.dart';
+import 'package:tree_coin/app/modules/dashboard/model/get_trees_response/datum.dart';
+import 'package:tree_coin/app/modules/dashboard/providers/dashboard_providers.dart';
 
 class TreeDecriptionView extends ConsumerWidget {
-  TreeDecriptionView({Key? key, required this.title}) : super(key: key);
-  final String title;
+  TreeDecriptionView({Key? key, required this.treeData}) : super(key: key);
+  final TreeData treeData;
   static const routeName = '/treeDescription';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = ref.read(appThemeProvider);
+    final load = ref.watch(loadCartProvider);
     return SafeArea(
       child: Scaffold(
         backgroundColor: BaseColor.pageBackground,
@@ -21,7 +29,7 @@ class TreeDecriptionView extends ConsumerWidget {
           toolbarHeight: MediaQuery.of(context).size.height * 0.1,
           backgroundColor: appTheme.lightTheme.primaryColor,
           title: Text(
-            title,
+            treeData.name ?? "N/A",
             style: BaseTextStyle.appBarHeader.copyWith(color: Colors.black),
           ),
           centerTitle: true,
@@ -110,54 +118,88 @@ class TreeDecriptionView extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      "iller text is text that shares some characteristics of a real written text, but is random or otherwise generated. It may be used to display a sample of fonts, generate text for testing, or to spoof an e-mail spam filte",
+                      treeData.description ?? "N/A",
                       style: BaseTextStyle.pageDescriptionDark,
                     ),
                   ],
                 ),
               ),
               Spacer(),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  width: MediaQuery.of(context).size.width * 1,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.blueGrey, blurRadius: 5)
-                      ]),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Price : 250",
-                        style: BaseTextStyle.blacks16w500,
+              load
+                  ? PhysicalModel(
+                      color: Colors.blueGrey,
+                      shape: BoxShape.circle,
+                      elevation: 3,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                      SizedBox(
-                        width: 15,
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05,
                       ),
-                      VerticalDivider(
-                        endIndent: 10,
-                        indent: 10,
-                        color: Colors.black,
+                      child: InkWell(
+                        onTap: () {
+                          ref.read(loadCartProvider.notifier).state = true;
+                          ref
+                              .read(cartRepositoryProvider)
+                              .addToCart(treeData.name ?? "N/A")
+                              .then((value) {
+                            log(value.toString());
+                            if (value) {
+                              context.push(CartView.routeName);
+                            } else {
+                              ref.read(loadCartProvider.notifier).state = false;
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.05,
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          width: MediaQuery.of(context).size.width * 1,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(color: Colors.blueGrey, blurRadius: 5)
+                              ]),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Price : ₹${treeData.price}",
+                                style: BaseTextStyle.blacks16w500,
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              VerticalDivider(
+                                endIndent: 10,
+                                indent: 10,
+                                color: Colors.black,
+                              ),
+                              Spacer(),
+                              Text(
+                                "Add to cart",
+                                style: BaseTextStyle.blacks16w500,
+                              ),
+                              Spacer(),
+                              Icon(Icons.shopping_bag)
+                            ],
+                          ),
+                        ),
                       ),
-                      Spacer(),
-                      Text(
-                        "Add to cart",
-                        style: BaseTextStyle.blacks16w500,
-                      ),
-                      Spacer(),
-                      Icon(Icons.shopping_bag)
-                    ],
-                  ),
-                ),
-              )
+                    )
             ],
           ),
         ),

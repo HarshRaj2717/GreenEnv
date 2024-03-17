@@ -22,6 +22,7 @@ class DashboardView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncUserProvider = ref.watch(userProfileProvider);
     final showBalance = ref.watch(showBalanceProvider);
+    final asyncTress = ref.watch(getTreesProvider);
     final appTheme = ref.read(appThemeProvider);
     return SafeArea(
         child: asyncUserProvider.when(
@@ -153,84 +154,107 @@ class DashboardView extends ConsumerWidget {
                         SizedBox(
                           height: 20,
                         ),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 55,
-                          runSpacing: 30,
-                          children: [
-                            for (int i = 0; i < 8; i++)
-                              InkWell(
-                                onTap: () {
-                                  context.push(TreeDecriptionView.routeName,
-                                      extra: "Title");
-                                },
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.38,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.05,
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              0.01),
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                          blurRadius: 5, color: Colors.blueGrey)
-                                    ],
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(12),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Center(
-                                        child: Image.asset(
-                                          BaseAssets.logo,
+                        asyncTress.when(
+                            data: (data) {
+                              int len = data.data?.length ?? 0;
+                              return Wrap(
+                                alignment: WrapAlignment.start,
+                                spacing: 55,
+                                runSpacing: 30,
+                                children: [
+                                  for (int i = 0; i < len; i++)
+                                    InkWell(
+                                      onTap: () {
+                                        context.push(
+                                            TreeDecriptionView.routeName,
+                                            extra: data.data?[i]);
+                                      },
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.38,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05,
+                                            vertical: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.01),
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                                blurRadius: 5,
+                                                color: Colors.blueGrey)
+                                          ],
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(12),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Center(
+                                              child: Image.asset(
+                                                BaseAssets.logo,
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                RichText(
+                                                    text: TextSpan(children: [
+                                                  TextSpan(
+                                                      text: "Species : ",
+                                                      style: BaseTextStyle
+                                                          .blacks15w500),
+                                                  TextSpan(
+                                                      text:
+                                                          data.data?[i].name ??
+                                                              "N/A",
+                                                      style: BaseTextStyle
+                                                          .blacks15w500
+                                                          .copyWith(
+                                                              color:
+                                                                  Colors.green))
+                                                ])),
+                                              ],
+                                            ),
+                                            RichText(
+                                                text: TextSpan(children: [
+                                              TextSpan(
+                                                  text: "Price : ",
+                                                  style: BaseTextStyle
+                                                      .blacks15w500),
+                                              TextSpan(
+                                                  text:
+                                                      "₹${data.data?[i].price}",
+                                                  style: BaseTextStyle
+                                                      .blacks15w500
+                                                      .copyWith(
+                                                          color: Colors.green))
+                                            ])),
+                                          ],
                                         ),
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          RichText(
-                                              text: TextSpan(children: [
-                                            TextSpan(
-                                                text: "Species : ",
-                                                style:
-                                                    BaseTextStyle.blacks15w500),
-                                            TextSpan(
-                                                text: "XYXXX",
-                                                style: BaseTextStyle
-                                                    .blacks15w500
-                                                    .copyWith(
-                                                        color: Colors.green))
-                                          ])),
-                                        ],
-                                      ),
-                                      RichText(
-                                          text: TextSpan(children: [
-                                        TextSpan(
-                                            text: "Price : ",
-                                            style: BaseTextStyle.blacks15w500),
-                                        TextSpan(
-                                            text: "250",
-                                            style: BaseTextStyle.blacks15w500
-                                                .copyWith(color: Colors.green))
-                                      ])),
-                                    ],
-                                  ),
+                                    )
+                                ],
+                              );
+                            },
+                            error: (error, stackTrace) => Center(
+                                  child: Text(error.toString()),
                                 ),
-                              )
-                          ],
-                        )
+                            loading: () => Center(
+                                  child: CircularProgressIndicator(),
+                                ))
                       ],
                     ),
                   ),

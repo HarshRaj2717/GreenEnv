@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tree_coin/app/core/local_storage/app_storage.dart';
 import 'package:tree_coin/app/core/network/api_client.dart';
 import 'package:tree_coin/app/core/network/endpoints.dart';
+import 'package:tree_coin/app/modules/dashboard/model/get_trees_response/get_trees_response.dart';
 import 'package:tree_coin/app/modules/dashboard/model/user_profile_response/user_profile_response.dart';
 import 'dashboard_repository.dart';
 
@@ -18,6 +19,17 @@ class DashboardRepositoryImpl extends DashboardRepository {
           await apiClient.get("${Endpoints.base.url}/$token/profile/");
 
       return UserProfileResponse.fromJson(response.data);
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
+  @override
+  Future<GetTreesResponse> getTrees() async {
+    try {
+      final apiClient = ApiClient().init();
+      final response = await apiClient.get(Endpoints.getTrees.url);
+      return GetTreesResponse.fromJson(response.data);
     } catch (e) {
       return Future.error(e.toString());
     }

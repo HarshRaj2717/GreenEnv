@@ -12,6 +12,7 @@ import 'package:tree_coin/app/helper/assets.dart';
 import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/helper/primary_button.dart';
 import 'package:tree_coin/app/helper/text_style.dart';
+import 'package:tree_coin/app/modules/auth/login/providers/login_providers.dart';
 import 'package:tree_coin/app/modules/auth/login/repository/login_repository_impl.dart';
 import 'package:tree_coin/app/modules/auth/registration/view/registration_view.dart';
 import 'package:tree_coin/app/modules/dashboard/view/dashboard_view.dart';
@@ -29,7 +30,9 @@ class LoginView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final show = ref.watch(showPassowrd);
     final appTheme = ref.read(appThemeProvider);
+    final loading = ref.watch(loadingProvider);
     return SafeArea(
       child: Scaffold(
         backgroundColor: BaseColor.pageBackground,
@@ -124,6 +127,7 @@ class LoginView extends ConsumerWidget {
                           Expanded(
                             flex: 9,
                             child: TextFormField(
+                              obscureText: !show,
                               controller: password,
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -138,7 +142,21 @@ class LoginView extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 1, child: Icon(Icons.visibility)),
+                          Expanded(
+                              flex: 1,
+                              child: show
+                                  ? InkWell(
+                                      onTap: () {
+                                        ref.read(showPassowrd.notifier).state =
+                                            !ref.read(showPassowrd);
+                                      },
+                                      child: Icon(Icons.visibility_off))
+                                  : InkWell(
+                                      onTap: () {
+                                        ref.read(showPassowrd.notifier).state =
+                                            !ref.read(showPassowrd);
+                                      },
+                                      child: Icon(Icons.visibility))),
                         ],
                       )
                     ],
@@ -159,29 +177,42 @@ class LoginView extends ConsumerWidget {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.05),
-                child: buttonPrimary(
-                    "Login",
-                    BaseTextStyle.buttonPrimary,
-                    context,
-                    MediaQuery.of(context).size.width * 1,
-                    appTheme.lightTheme.primaryColorDark, () {
-                  if (loginKey.currentState!.validate()) {
-                    ref
-                        .read(loginRepositoryProvider)
-                        .loginUser(email.text, password.text)
-                        .then((value) {
-                      if (value) {
-                        context.go(DashboardView.routeName);
-                      } else {
-                        log(value.toString());
-                      }
-                    });
-                  }
-                }),
-              ),
+              loading
+                  ? CircleAvatar(
+                      radius: 30,
+                      backgroundColor: appTheme.lightTheme.primaryColorDark,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.05),
+                      child: buttonPrimary(
+                          "Login",
+                          BaseTextStyle.buttonPrimary,
+                          context,
+                          MediaQuery.of(context).size.width * 1,
+                          appTheme.lightTheme.primaryColorDark, () {
+                        if (loginKey.currentState!.validate()) {
+                          ref.read(loadingProvider.notifier).state = true;
+                          ref
+                              .read(loginRepositoryProvider)
+                              .loginUser(email.text, password.text)
+                              .then((value) {
+                            if (value) {
+                              context.go(DashboardView.routeName);
+                            } else {
+                              log(value.toString());
+                              ref.read(loadingProvider.notifier).state = false;
+                            }
+                          });
+                        }
+                      }),
+                    ),
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.05),

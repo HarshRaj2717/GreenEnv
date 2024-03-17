@@ -52,7 +52,6 @@ dependencies:
   intl_phone_field:
   # Screenshot 
   screenshot: ^2.1.0
-
   country_picker: ^2.0.23
   
 

@@ -9,6 +9,7 @@ import 'package:tree_coin/app/helper/base_color.dart';
 import 'package:tree_coin/app/helper/primary_button.dart';
 import 'package:tree_coin/app/helper/text_style.dart';
 import 'package:tree_coin/app/modules/auth/login/view/login_view.dart';
+import 'package:tree_coin/app/modules/auth/registration/providers/registration_providers.dart';
 import 'package:tree_coin/app/modules/auth/registration/repository/registration_repository_impl.dart';
 import 'package:tree_coin/app/modules/auth/verify_otp/view/verify_otp_view.dart';
 
@@ -31,6 +32,9 @@ class RegistrationView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = ref.read(appThemeProvider);
+    final show = ref.watch(showRegPassowrd);
+    final confirm = ref.watch(showConfirmPassowrd);
+    final load = ref.watch(loadingReg);
     return SafeArea(
       child: Scaffold(
         backgroundColor: BaseColor.pageBackground,
@@ -402,6 +406,7 @@ class RegistrationView extends ConsumerWidget {
                             Expanded(
                               flex: 9,
                               child: TextFormField(
+                                obscureText: !show,
                                 controller: password,
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -416,7 +421,25 @@ class RegistrationView extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            Expanded(flex: 1, child: Icon(Icons.visibility)),
+                            Expanded(
+                                flex: 1,
+                                child: show
+                                    ? InkWell(
+                                        onTap: () {
+                                          ref
+                                                  .read(showRegPassowrd.notifier)
+                                                  .state =
+                                              !ref.read(showRegPassowrd);
+                                        },
+                                        child: Icon(Icons.visibility_off))
+                                    : InkWell(
+                                        onTap: () {
+                                          ref
+                                                  .read(showRegPassowrd.notifier)
+                                                  .state =
+                                              !ref.read(showRegPassowrd);
+                                        },
+                                        child: Icon(Icons.visibility))),
                           ],
                         )
                       ],
@@ -448,6 +471,7 @@ class RegistrationView extends ConsumerWidget {
                             Expanded(
                               flex: 9,
                               child: TextFormField(
+                                obscureText: !confirm,
                                 controller: confirmPassword,
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -464,7 +488,27 @@ class RegistrationView extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            Expanded(flex: 1, child: Icon(Icons.visibility)),
+                            Expanded(
+                                flex: 1,
+                                child: confirm
+                                    ? InkWell(
+                                        onTap: () {
+                                          ref
+                                                  .read(showConfirmPassowrd
+                                                      .notifier)
+                                                  .state =
+                                              !ref.read(showConfirmPassowrd);
+                                        },
+                                        child: Icon(Icons.visibility_off))
+                                    : InkWell(
+                                        onTap: () {
+                                          ref
+                                                  .read(showConfirmPassowrd
+                                                      .notifier)
+                                                  .state =
+                                              !ref.read(showConfirmPassowrd);
+                                        },
+                                        child: Icon(Icons.visibility))),
                           ],
                         )
                       ],
@@ -474,45 +518,61 @@ class RegistrationView extends ConsumerWidget {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.05,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.05),
-                  child: buttonPrimary(
-                      "Register",
-                      BaseTextStyle.buttonPrimary,
-                      context,
-                      MediaQuery.of(context).size.width * 1,
-                      appTheme.lightTheme.primaryColorDark, () {
-                    if (registerKey.currentState!.validate()) {
-                      ref
-                          .read(registrationRepositoryProvider)
-                          .registerUser(
-                              email.text,
-                              password.text,
-                              "${firstName.text} ${lastName.text}",
-                              address.text,
-                              state.text,
-                              zipcode.text,
-                              city.text)
-                          .then((value) {
-                        if (value) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VerifyOtpView(
-                                    email: email.text,
-                                    password: password.text,
-                                    name: "${firstName.text} ${lastName.text}",
-                                    address: address.text,
-                                    zipCode: zipcode.text,
-                                    city: city.text,
-                                    state: state.text),
-                              ));
-                        } else {}
-                      });
-                    }
-                  }),
-                ),
+                load
+                    ? CircleAvatar(
+                        radius: 30,
+                        backgroundColor: appTheme.lightTheme.primaryColorDark,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.05),
+                        child: buttonPrimary(
+                            "Register",
+                            BaseTextStyle.buttonPrimary,
+                            context,
+                            MediaQuery.of(context).size.width * 1,
+                            appTheme.lightTheme.primaryColorDark, () {
+                          if (registerKey.currentState!.validate()) {
+                            ref.read(loadingReg.notifier).state = true;
+                            ref
+                                .read(registrationRepositoryProvider)
+                                .registerUser(
+                                    email.text,
+                                    password.text,
+                                    "${firstName.text} ${lastName.text}",
+                                    address.text,
+                                    state.text,
+                                    zipcode.text,
+                                    city.text)
+                                .then((value) {
+                              if (value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VerifyOtpView(
+                                          email: email.text,
+                                          password: password.text,
+                                          name:
+                                              "${firstName.text} ${lastName.text}",
+                                          address: address.text,
+                                          zipCode: zipcode.text,
+                                          city: city.text,
+                                          state: state.text),
+                                    ));
+                              } else {
+                                ref.read(loadingReg.notifier).state = false;
+                              }
+                            });
+                          }
+                        }),
+                      ),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.05),
